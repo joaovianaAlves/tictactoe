@@ -3,7 +3,6 @@ import { FaX, FaO } from "react-icons/fa6";
 
 export default function Board() {
   const [currPlayer, setCurrPlayer] = useState("O");
-  const [round, setRound] = useState(0);
   const [restart, setRestart] = useState(false);
   const [winner, setWinner] = useState("");
   const [winnerCells, setWinnerCells] = useState<number[][] | null>(null);
@@ -36,7 +35,6 @@ export default function Board() {
     }
 
     setBoard(newBoard);
-    setRound(round + 1);
     setCurrPlayer(currPlayer === "X" ? "O" : "X");
   };
 
@@ -46,34 +44,55 @@ export default function Board() {
       ["", "", ""],
       ["", "", ""],
     ]);
-    setRound(0);
     setRestart(false);
   };
 
   return (
     <div className="flex flex-col justify-center items-center mx-auto h-full">
-      <h1 className={`text-3xl font-semibold p-10`}>
-        {restart
-          ? winner === "Draw"
-            ? "It's a Draw"
-            : `${winner} Won`
-          : `${currPlayer} Turn`}
+      <h1 className={`text-4xl font-semibold p-10`}>
+        {restart ? (
+          winner === "Draw" ? (
+            "It's a Draw"
+          ) : (
+            <div className="flex gap-2">
+              <span
+                className={`${
+                  currPlayer == "O" ? "text-[#134B70]" : "text-[#508C9B]"
+                }`}
+              >
+                {winner}
+              </span>
+              <span className="">Won</span>
+            </div>
+          )
+        ) : (
+          <div className="flex gap-2">
+            <span
+              className={`${
+                currPlayer == "O" ? "text-[#134B70]" : "text-[#134B70]"
+              }`}
+            >
+              {currPlayer}
+            </span>
+            <span className="">Turn</span>
+          </div>
+        )}
       </h1>
       {board.map((row, i) => (
         <div className="flex " key={i}>
           {row.map((cell, j) => (
             <div
-              className={`flex justify-center items-center mx-auto w-20 h-20 ${
-                i < 2 ? "border-b-2 border-[#16423C] rounded-b-[size]" : ""
-              } ${
-                j < 2 ? "border-r-2 border-[#16423C] rounded-r-[size]" : ""
-              } ${
-                restart && winnerCells != null
-                  ? winnerCells.some(([x, y]) => x === i && y === j)
-                    ? "bg-green-300"
-                    : ""
-                  : ""
-              }`}
+              className={`flex justify-center items-center mx-auto w-28 h-28 
+        ${i < 2 ? "border-b-2 border-[#181C14] rounded-b-[size]" : ""}
+        ${j < 2 ? "border-r-2 border-[#181C14] rounded-r-[size]" : ""}
+        ${
+          restart && winnerCells != null
+            ? winnerCells.some(([x, y]) => x === i && y === j)
+              ? "bg-green-200"
+              : ""
+            : ""
+        }
+        transition-all duration-300 ease-in-out`}
               key={j}
             >
               <button
@@ -82,9 +101,9 @@ export default function Board() {
                 onClick={() => handleClick(i, j)}
               >
                 {cell === "X" ? (
-                  <FaX size={50} />
+                  <FaX color="#134B70" size={80} className="animate-appear" />
                 ) : cell === "O" ? (
-                  <FaO size={50} />
+                  <FaO color="#508C9B" size={80} className="animate-appear" />
                 ) : (
                   ""
                 )}
@@ -95,14 +114,12 @@ export default function Board() {
       ))}
       {restart === true ? (
         <button
-          className="bg-[#6A9C89] mt-10 px-6 py-2 rounded-lg hover:bg-[#C4DAD2]"
+          className="font-semibold bg-[#508C9B] mt-10 px-8 py-3 rounded-lg hover:bg-[#134B70] text-white shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
           onClick={() => restartGame()}
         >
           Restart
         </button>
-      ) : (
-        ""
-      )}
+      ) : null}
     </div>
   );
 }

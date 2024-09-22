@@ -6,7 +6,7 @@ export default function Board() {
   const [round, setRound] = useState(0);
   const [restart, setRestart] = useState(false);
   const [winner, setWinner] = useState("");
-  const [winnerCells, setWinnerCells] = useState<number[][]>([]);
+  const [winnerCells, setWinnerCells] = useState<number[][] | null>(null);
   const [board, setBoard] = useState([
     ["", "", ""],
     ["", "", ""],
@@ -30,6 +30,7 @@ export default function Board() {
       setRestart(true);
       setWinnerCells(win.cells);
     } else if (newBoard.flat().every((cell) => cell !== "")) {
+      setWinnerCells(null);
       setWinner("Draw");
       setRestart(true);
     }
@@ -67,19 +68,25 @@ export default function Board() {
               } ${
                 j < 2 ? "border-r-2 border-[#16423C] rounded-r-[size]" : ""
               } ${
-                winnerCells.some(([x, y]) => x === i && y === j)
-                  ? "bg-green-300"
+                restart && winnerCells != null
+                  ? winnerCells.some(([x, y]) => x === i && y === j)
+                    ? "bg-green-300"
+                    : ""
                   : ""
               }`}
               key={j}
             >
-              <button disabled={restart} onClick={() => handleClick(i, j)}>
+              <button
+                className="flex w-full h-full justify-center items-center"
+                disabled={restart}
+                onClick={() => handleClick(i, j)}
+              >
                 {cell === "X" ? (
                   <FaX size={50} />
                 ) : cell === "O" ? (
                   <FaO size={50} />
                 ) : (
-                  "-"
+                  ""
                 )}
               </button>
             </div>
@@ -154,5 +161,6 @@ function calculateWin(board: string[][]) {
     ];
     return { board: board[0][2], cells: winnnerCells };
   }
+
   return null;
 }

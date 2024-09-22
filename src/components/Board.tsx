@@ -4,6 +4,7 @@ import { FaX, FaO } from "react-icons/fa6";
 export default function Board() {
   const [currPlayer, setCurrPlayer] = useState("O");
   const [restart, setRestart] = useState(false);
+  const [restartAnimation, setRestartAnimation] = useState(false);
   const [winner, setWinner] = useState("");
   const [winnerCells, setWinnerCells] = useState<number[][] | null>(null);
   const [board, setBoard] = useState([
@@ -11,7 +12,7 @@ export default function Board() {
     ["", "", ""],
     ["", "", ""],
   ]);
-
+  console.log(restartAnimation);
   const handleClick = (i?: number, j?: number) => {
     if (i === undefined || j === undefined) {
       return;
@@ -30,8 +31,8 @@ export default function Board() {
       setWinnerCells(win.cells);
     } else if (newBoard.flat().every((cell) => cell !== "")) {
       setWinnerCells(null);
-      setWinner("Draw");
       setRestart(true);
+      setWinner("Draw");
     }
 
     setBoard(newBoard);
@@ -39,22 +40,30 @@ export default function Board() {
   };
 
   const restartGame = () => {
-    setBoard([
-      ["", "", ""],
-      ["", "", ""],
-      ["", "", ""],
-    ]);
-    setRestart(false);
+    setRestartAnimation(true);
+    setTimeout(() => {
+      setBoard([
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+      ]);
+      setRestart(false);
+      setWinner("");
+      setWinnerCells(null);
+      setRestartAnimation(false);
+    }, 200);
   };
 
   return (
-    <div className="flex flex-col justify-center items-center mx-auto h-full">
+    <div
+      className={`flex flex-col justify-center items-center mx-auto h-full `}
+    >
       <h1 className={`text-4xl font-semibold p-10`}>
         {restart ? (
           winner === "Draw" ? (
             "It's a Draw"
           ) : (
-            <div className="flex gap-2">
+            <div className={`flex gap-2 `}>
               <span
                 className={`${
                   currPlayer == "O" ? "text-[#134B70]" : "text-[#508C9B]"
@@ -96,7 +105,9 @@ export default function Board() {
               key={j}
             >
               <button
-                className="flex w-full h-full justify-center items-center"
+                className={`flex w-full h-full justify-center items-center ${
+                  restartAnimation ? "animate-disappear" : ""
+                }`}
                 disabled={restart}
                 onClick={() => handleClick(i, j)}
               >
@@ -112,10 +123,12 @@ export default function Board() {
           ))}
         </div>
       ))}
-      {restart === true ? (
+      {restart ? (
         <button
           className="font-semibold bg-[#508C9B] mt-10 px-8 py-3 rounded-lg hover:bg-[#134B70] text-white shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
-          onClick={() => restartGame()}
+          onClick={() => {
+            restartGame();
+          }}
         >
           Restart
         </button>

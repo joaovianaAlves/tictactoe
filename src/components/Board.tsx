@@ -12,7 +12,6 @@ export default function Board() {
     ["", "", ""],
     ["", "", ""],
   ]);
-  console.log(restartAnimation);
   const handleClick = (i?: number, j?: number) => {
     if (i === undefined || j === undefined) {
       return;
@@ -51,7 +50,7 @@ export default function Board() {
       setWinner("");
       setWinnerCells(null);
       setRestartAnimation(false);
-    }, 200);
+    }, 300);
   };
 
   return (
